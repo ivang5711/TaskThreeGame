@@ -1,7 +1,12 @@
-﻿namespace TaskThreeGame
+﻿using Spectre.Console;
+
+namespace TaskThreeGame
 {
     public class GameMoves
     {
+        private const string draw = "Draw";
+        private const string win = "Win";
+        private const string lose = "Lose";
         public string[,] HelpTable { get; set; }
 
         public string[] Moves { get; set; }
@@ -17,10 +22,7 @@
         {
             if (Moves.Length < 3 || Moves.Length % 2 == 0)
             {
-                Console.Write($"Oops! Seems like you have entered wrong amount of arguments...\n\n" +
-                    "You have entered ");
-                PrintWithColor(Moves.Length.ToString());
-                Console.Write(" arguments.\n\n");
+                PrintArgumentsAmountErrorMessage();
                 PrintArgumentsHelp();
                 Environment.Exit(0);
             }
@@ -34,18 +36,7 @@
                     {
                         var k = Array.IndexOf(Moves, temp[i]);
                         Console.WriteLine($"Oops! Argument number {k + 1} is not unique:\n");
-                        for (int j = 0; j < Moves.Length; j++)
-                        {
-                            if (Moves[j] == Moves[k])
-                            {
-                                PrintWithColor($"{Moves[j]} ");
-                            }
-                            else
-                            {
-                                Console.Write(Moves[j] + " ");
-                            }
-                        }
-
+                        PrintMovesWithNonUniqueMembers(k);
                         Console.Write("\n\n");
                         PrintArgumentsHelp();
                         Environment.Exit(0);
@@ -54,67 +45,119 @@
             }
         }
 
-        private static void PrintArgumentsHelp()
+        private void PrintMovesWithNonUniqueMembers(int k)
         {
-            Console.Write("Please provide odd number of unique arguments and\n" +
-                    "make sure the overall amount of arguments equals or greater than 3.\n\n");
-            PrintWithColor("CORRECT EXAMPLE:\n\n\t", ConsoleColor.Green);
-            Console.Write("Rock Scissors Paper Lizard Spok\n\n");
-            PrintWithColor("INCORRECT EXAMPLE:\n\n\t");
-            Console.Write("Rock Scissors Paper Scissors\n\n");
+            for (int j = 0; j < Moves.Length; j++)
+            {
+                AnsiConsole.Markup(
+                    (Moves[j] == Moves[k]) ? $"[red]{Moves[j]}[/] " : $"{Moves[j]} "
+                    );
+            }
         }
 
-        private static void PrintWithColor(string input, ConsoleColor color = ConsoleColor.Red)
+        private void PrintArgumentsAmountErrorMessage()
         {
-            ConsoleColor originalColor = Console.ForegroundColor;
-            Console.ForegroundColor = color;
-            Console.Write(input);
-            Console.ForegroundColor = originalColor;
+            AnsiConsole.Markup($"Oops! Seems like you have entered wrong" +
+                    $" amount of arguments...\n\nYou have entered " +
+                    $"[underline red]{Moves.Length}[/] arguments.\n\n");
+        }
+
+        private static void PrintArgumentsHelp()
+        {
+            AnsiConsole.Markup("Please provide odd number of unique " +
+                "arguments and\n" +
+                "make sure the overall amount of arguments equals or " +
+                "greater than 3.\n\n");
+            PrintExample();
+        }
+
+        private static void PrintExample()
+        {
+            AnsiConsole.Markup(
+                "[underline green]CORRECT EXAMPLE:[/]\n\n\t" +
+                "Rock Scissors Paper Lizard Spok\n\n" +
+                "[underline red]INCORRECT EXAMPLE:[/]\n\n\t" +
+                "Rock Scissors Paper Scissors\n\n");
         }
 
         private void CreateHelpTable()
         {
             for (int i = 0; i < Moves.Length; i++)
             {
-                for (int j = 0; j < Moves.Length; j++)
+                PopulateValuesToRight(i);
+                PopulateValuesToLeft(i);
+            }
+        }
+
+        private void PopulateValuesToRight(int i)
+        {
+            for (int j = 0; j < Moves.Length; j++)
+            {
+                if (j == i)
                 {
-                    if (j == i)
-                    {
-                        HelpTable[i, j] = "Draw";
-                        j++;
-                        int k = 0;
-                        while (j < Moves.Length && k < Moves.Length / 2)
-                        {
-                            HelpTable[i, j] = "Win!";
-                            j++;
-                            k++;
-                        }
-                        while (j < Moves.Length)
-                        {
-                            HelpTable[i, j] = "Lose";
-                            j++;
-                        }
-                    }
+                    PopulateRowToRight(i, j);
                 }
-                for (int j = Moves.Length - 1; j >= 0; j--)
+            }
+        }
+
+        private void PopulateRowToRight(int i, int j)
+        {
+            HelpTable[i, j++] = draw;
+            j = PopulateWinToRight(i, j);
+            PopulateLoseToRight(i, j);
+        }
+
+        private int PopulateWinToRight(int i, int j)
+        {
+            for (int k = 0; j < Moves.Length && k < Moves.Length / 2; k++)
+            {
+                HelpTable[i, j++] = win;
+            }
+
+            return j;
+        }
+
+        private void PopulateLoseToRight(int i, int j)
+        {
+            while (j < Moves.Length)
+            {
+                HelpTable[i, j++] = lose;
+            }
+        }
+
+        private void PopulateValuesToLeft(int i)
+        {
+            for (int j = Moves.Length - 1; j >= 0; j--)
+            {
+                if (j == i)
                 {
-                    if (j == i)
-                    {
-                        j--;
-                        int k = 0;
-                        while (j >= 0 && k < Moves.Length / 2)
-                        {
-                            HelpTable[i, j] = "Lose";
-                            j--;
-                            k++;
-                        }
-                        while (j >= 0)
-                        {
-                            HelpTable[i, j] = "Win!";
-                            j--;
-                        }
-                    }
+                    PopulateRowToLeft(i, j);
                 }
+            }
+        }
+
+        private void PopulateRowToLeft(int i, int j)
+        {
+            j--;
+            j = PopulateLoseToLeft(i, j);
+            PopulateWinToLeft(i, j);
+        }
+
+        private int PopulateLoseToLeft(int i, int j)
+        {
+            for (int k = 0; j >= 0 && k < Moves.Length / 2; k++)
+            {
+                HelpTable[i, j--] = lose;
+            }
+
+            return j;
+        }
+
+        private void PopulateWinToLeft(int i, int j)
+        {
+            while (j >= 0)
+            {
+                HelpTable[i, j--] = win;
             }
         }
     }

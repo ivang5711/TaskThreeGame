@@ -1,8 +1,7 @@
 {
   "profiles": {
     "TaskThreeGame": {
-      "commandName": "Project",
-      "commandLineArgs": "a b c c c"
+      "commandName": "Project"
     }
   }
 }

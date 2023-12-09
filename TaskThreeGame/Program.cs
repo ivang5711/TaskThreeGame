@@ -1,7 +1,4 @@
-﻿using Spectre.Console;
-using System.Linq;
-
-namespace TaskThreeGame
+﻿namespace TaskThreeGame
 {
     internal class Program
     {
@@ -16,9 +13,9 @@ namespace TaskThreeGame
             }
             catch (ArgumentException ex)
             {
-                #if DEBUG
+#if DEBUG
                 Console.WriteLine(ex);
-                #endif
+#endif
                 return;
             }
             catch (Exception ex)

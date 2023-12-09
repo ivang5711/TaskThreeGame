@@ -29,11 +29,18 @@ namespace TaskThreeGame
 
         private void AddColumsToTable()
         {
-            table.AddColumn(new TableColumn($"[khaki1]PC[/]\\[lightsteelblue]User[/]"));
+            AddFirstColumnToTable();
             for (int i = 0; i < gameMoves.Moves.Length; i++)
             {
-                table.AddColumn(new TableColumn($"[lightsteelblue]{gameMoves.Moves[i]}[/]"));
+                table.AddColumn(
+                    new TableColumn($"[lightsteelblue]{gameMoves.Moves[i]}[/]"));
             }
+        }
+
+        private void AddFirstColumnToTable()
+        {
+            table.AddColumn(
+                new TableColumn($"[khaki1]PC[/]\\[lightsteelblue]User[/]"));
         }
 
         private void AddRowNamesToTable()
@@ -62,10 +69,74 @@ namespace TaskThreeGame
 
         private void SetTableParameters()
         {
-            table.Border(TableBorder.Square).BorderColor(Color.Grey27).Centered()
-                .ShowRowSeparators()
+            table.Border(TableBorder.Square).BorderColor(Color.Grey27)
+                .Centered().ShowRowSeparators()
                 .Title(" Help Table ",
                     new Style(Color.White, Color.MediumPurple4, Decoration.None));
+        }
+
+        public static void PrintArgumentsRequirements()
+        {
+            AnsiConsole.Markup("Please provide odd number of unique " +
+                "arguments and\n" +
+                "make sure the overall amount of arguments equals or " +
+                "greater than 3.\n\n");
+        }
+
+        public static void PrintArgumentsAmountErrorMessage(int amount)
+        {
+            AnsiConsole.Markup($"Oops! Seems like you have entered wrong" +
+                    $" amount of arguments...\n\nYou have entered " +
+                    $"[underline red]{amount}[/] arguments.\n\n");
+        }
+
+        private static void PrintSingleMoveWithColor(List<string> distinctMoves,
+            string item)
+        {
+            AnsiConsole.Markup(
+                    distinctMoves.Contains(item) ?
+                    $"[underline red]{item}[/] " :
+                    $"[green]{item}[/] "
+                    );
+        }
+
+        public static void PrintMovesRowWithColor(List<string> distinctMoves,
+            string[] Moves)
+        {
+            foreach (string item in Moves)
+            {
+                PrintSingleMoveWithColor(distinctMoves, item);
+            }
+
+            Console.WriteLine("\n\n");
+        }
+
+        public static void PrintNonUniqueErrorMessage()
+        {
+            Console.WriteLine($"Oops! Arguments marked with red " +
+                    $"are not unique:\n");
+        }
+
+        public static void PrintExample()
+        {
+            AnsiConsole.Write(CreateCorrectExamplePanel());
+            AnsiConsole.Write(CreateIncorrectExampleTable());
+        }
+
+        private static Panel CreateCorrectExamplePanel()
+        {
+            return new Panel("Rock Scissors Paper Lizard Spok")
+                .Header("[underline green]CORRECT EXAMPLE:[/]")
+                .Border(BoxBorder.Rounded).HeaderAlignment(Justify.Left)
+                .Padding(2, 1, 2, 1).PadLeft(8);
+        }
+
+        private static Panel CreateIncorrectExampleTable()
+        {
+            return new Panel("Rock Scissors Paper Scissors")
+                .Header("[underline red]INCORRECT EXAMPLE:[/]")
+                .Border(BoxBorder.Rounded).HeaderAlignment(Justify.Left)
+                .Padding(2, 1, 2, 1).PadLeft(8).PadRight(5);
         }
     }
 }

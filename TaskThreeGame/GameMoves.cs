@@ -7,8 +7,8 @@ namespace TaskThreeGame
         private const string draw = "Draw";
         private const string win = "Win";
         private const string lose = "Lose";
-        public string[,] HelpTable { get; set; }
 
+        public string[,] HelpTable { get; set; }
         public string[] Moves { get; set; }
 
         public GameMoves(string[] moves)
@@ -18,40 +18,20 @@ namespace TaskThreeGame
             CreateHelpTable();
         }
 
-        private void PrintArgumentsAmountErrorMessage()
+        public void CheckMoves()
         {
-            AnsiConsole.Markup($"Oops! Seems like you have entered wrong" +
-                    $" amount of arguments...\n\nYou have entered " +
-                    $"[underline red]{Moves.Length}[/] arguments.\n\n");
+            if (!CheckMovesAmountCorrect() || !CheckAllMovesUnique())
+            {
+                PrintArgumentsHelp();
+                throw new ArgumentException("Command line arguments " +
+                    "provided are not correct.");
+            }
         }
 
         private void PrintArgumentsHelp()
         {
-            AnsiConsole.Markup("Please provide odd number of unique " +
-                "arguments and\n" +
-                "make sure the overall amount of arguments equals or " +
-                "greater than 3.\n\n");
-            PrintExample();
-        }
-
-        private void PrintExample()
-        {
-            AnsiConsole.Write(CreateCorrectExamplePanel());
-            AnsiConsole.Write(CreateIncorrectExampleTable());
-        }
-
-        private Panel CreateCorrectExamplePanel()
-        {
-            return new Panel("Rock Scissors Paper Lizard Spok")
-                .Header("[underline green]CORRECT EXAMPLE:[/]").Border(BoxBorder.Rounded)
-                .HeaderAlignment(Justify.Left).Padding(2, 1, 2, 1).PadLeft(8);
-        }
-
-        private Panel CreateIncorrectExampleTable()
-        {
-            return new Panel("Rock Scissors Paper Scissors")
-                .Header("[underline red]INCORRECT EXAMPLE:[/]").Border(BoxBorder.Rounded)
-                .HeaderAlignment(Justify.Left).Padding(2, 1, 2, 1).PadLeft(8).PadRight(5);
+            ConsoleUi.PrintArgumentsRequirements();
+            ConsoleUi.PrintExample();
         }
 
         private void CreateHelpTable()
@@ -135,20 +115,11 @@ namespace TaskThreeGame
             }
         }
 
-        public void CheckMoves()
-        {
-            if (!CheckMovesAmountCorrect() || !CheckAllMovesUnique())
-            {
-                PrintArgumentsHelp();
-                throw new ArgumentException("Command line arguments provided are not correct.");
-            }
-        }
-
         private bool CheckMovesAmountCorrect()
         {
             if (Moves.Length < 3 || Moves.Length % 2 == 0)
             {
-                PrintArgumentsAmountErrorMessage();
+                ConsoleUi.PrintArgumentsAmountErrorMessage(Moves.Length);
                 return false;
             }
 
@@ -157,7 +128,8 @@ namespace TaskThreeGame
 
         private bool CheckAllMovesUnique()
         {
-            bool isUnique = Moves.Select(x => x).Distinct().Count() == Moves.Select(x => x).Count();
+            bool isUnique = Moves.Select(x => x).Distinct().Count()
+                == Moves.Select(x => x).Count();
             PrintErrorMessageIfMovesNotUnique(isUnique);
             return isUnique;
         }
@@ -166,7 +138,7 @@ namespace TaskThreeGame
         {
             if (!isUnique)
             {
-                Console.WriteLine($"Oops! Arguments marked with red are not unique:\n");
+                ConsoleUi.PrintNonUniqueErrorMessage();
                 PrintMovesWithColor();
             }
         }
@@ -175,27 +147,12 @@ namespace TaskThreeGame
         {
             List<string> distinctMoves = new();
             GetDistinctMovesWithCount(ref distinctMoves);
-            foreach (string item in Moves)
-            {
-                PrintSingleMoveWithColor(distinctMoves, item);
-            }
-
-            Console.WriteLine("\n\n");
-        }
-
-        private void PrintSingleMoveWithColor(List<string> distinctMoves, string item)
-        {
-            AnsiConsole.Markup(
-                    distinctMoves.Contains(item) ?
-                    $"[underline red]{item}[/] " :
-                    $"[green]{item}[/] "
-                    );
+            ConsoleUi.PrintMovesRowWithColor(distinctMoves, Moves);
         }
 
         private void GetDistinctMovesWithCount(ref List<string> distinctMoves)
         {
-            var groups = Moves.GroupBy(v => v);
-            foreach (var group in groups)
+            foreach (var group in Moves.GroupBy(v => v))
             {
                 if (group.Count() > 1)
                 {

@@ -18,43 +18,6 @@ namespace TaskThreeGame
             CreateHelpTable();
         }
 
-        public void CheckMoves()
-        {
-            if (Moves.Length < 3 || Moves.Length % 2 == 0)
-            {
-                PrintArgumentsAmountErrorMessage();
-                PrintArgumentsHelp();
-                Environment.Exit(0);
-            }
-            else
-            {
-                string[] temp = (string[])Moves.Clone();
-                Array.Sort(temp, StringComparer.CurrentCulture);
-                for (int i = 1; i < temp.Length; i++)
-                {
-                    if (temp[i - 1] == temp[i])
-                    {
-                        var k = Array.IndexOf(Moves, temp[i]);
-                        Console.WriteLine($"Oops! Argument number {k + 1} is not unique:\n");
-                        PrintMovesWithNonUniqueMembers(k);
-                        Console.Write("\n\n");
-                        PrintArgumentsHelp();
-                        Environment.Exit(0);
-                    }
-                }
-            }
-        }
-
-        private void PrintMovesWithNonUniqueMembers(int k)
-        {
-            for (int j = 0; j < Moves.Length; j++)
-            {
-                AnsiConsole.Markup(
-                    (Moves[j] == Moves[k]) ? $"[red]{Moves[j]}[/] " : $"{Moves[j]} "
-                    );
-            }
-        }
-
         private void PrintArgumentsAmountErrorMessage()
         {
             AnsiConsole.Markup($"Oops! Seems like you have entered wrong" +
@@ -158,6 +121,75 @@ namespace TaskThreeGame
             while (j >= 0)
             {
                 HelpTable[i, j--] = win;
+            }
+        }
+
+        public void CheckMoves()
+        {
+            if (!CheckMovesAmountCorrect() || !CheckAllMovesUnique())
+            {
+                PrintArgumentsHelp();
+                throw new ArgumentException("Command line arguments provided are not correct.");
+            }
+        }
+
+        private bool CheckMovesAmountCorrect()
+        {
+            if (Moves.Length < 3 || Moves.Length % 2 == 0)
+            {
+                PrintArgumentsAmountErrorMessage();
+                return false;
+            }
+
+            return true;
+        }
+
+        private bool CheckAllMovesUnique()
+        {
+            bool isUnique = Moves.Select(x => x).Distinct().Count() == Moves.Select(x => x).Count();
+            PrintErrorMessageIfMovesNotUnique(isUnique);
+            return isUnique;
+        }
+
+        private void PrintErrorMessageIfMovesNotUnique(bool isUnique)
+        {
+            if (!isUnique)
+            {
+                Console.WriteLine($"Oops! Arguments marked with red are not unique:\n");
+                PrintMovesWithColor();
+            }
+        }
+
+        private void PrintMovesWithColor()
+        {
+            List<string> distinctMoves = new();
+            GetDistinctMovesWithCount(ref distinctMoves);
+            foreach (string item in Moves)
+            {
+                PrintSingleMoveWithColor(distinctMoves, item);
+            }
+
+            Console.WriteLine("\n\n");
+        }
+
+        private void PrintSingleMoveWithColor(List<string> distinctMoves, string item)
+        {
+            AnsiConsole.Markup(
+                    distinctMoves.Contains(item) ?
+                    $"[underline red]{item}[/] " :
+                    $"[green]{item}[/] "
+                    );
+        }
+
+        private void GetDistinctMovesWithCount(ref List<string> distinctMoves)
+        {
+            var groups = Moves.GroupBy(v => v);
+            foreach (var group in groups)
+            {
+                if (group.Count() > 1)
+                {
+                    distinctMoves.Add(group.Key);
+                }
             }
         }
     }

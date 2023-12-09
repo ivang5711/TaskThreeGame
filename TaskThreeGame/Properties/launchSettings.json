@@ -2,7 +2,7 @@
   "profiles": {
     "TaskThreeGame": {
       "commandName": "Project",
-      "commandLineArgs": "a b c d e f g h h"
+      "commandLineArgs": "a b c d e f g g g"
     }
   }
 }

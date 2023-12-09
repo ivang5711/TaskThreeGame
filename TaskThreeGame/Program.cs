@@ -1,4 +1,5 @@
 ﻿using Spectre.Console;
+using System.Linq;
 
 namespace TaskThreeGame
 {
@@ -8,13 +9,25 @@ namespace TaskThreeGame
         {
             GameMoves moves = new(args);
             ConsoleUi consoleUi = new(moves);
-            moves.CheckMoves();
-            Console.WriteLine();
+
+            try
+            {
+                moves.CheckMoves();
+            }
+            catch (ArgumentException ex)
+            {
+                #if DEBUG
+                Console.WriteLine(ex);
+                #endif
+                return;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                return;
+            }
+
             consoleUi.PrintHelpTable();
-
-            Console.WriteLine();
-
-            AnsiConsole.Markup("[underline red]Hello[/] World!");
         }
     }
 }

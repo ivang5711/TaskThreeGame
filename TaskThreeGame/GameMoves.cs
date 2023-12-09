@@ -25,7 +25,7 @@ namespace TaskThreeGame
                     $"[underline red]{Moves.Length}[/] arguments.\n\n");
         }
 
-        private static void PrintArgumentsHelp()
+        private void PrintArgumentsHelp()
         {
             AnsiConsole.Markup("Please provide odd number of unique " +
                 "arguments and\n" +
@@ -34,13 +34,24 @@ namespace TaskThreeGame
             PrintExample();
         }
 
-        private static void PrintExample()
+        private void PrintExample()
         {
-            AnsiConsole.Markup(
-                "[underline green]CORRECT EXAMPLE:[/]\n\n\t" +
-                "Rock Scissors Paper Lizard Spok\n\n" +
-                "[underline red]INCORRECT EXAMPLE:[/]\n\n\t" +
-                "Rock Scissors Paper Scissors\n\n");
+            AnsiConsole.Write(CreateCorrectExamplePanel());
+            AnsiConsole.Write(CreateIncorrectExampleTable());
+        }
+
+        private Panel CreateCorrectExamplePanel()
+        {
+            return new Panel("Rock Scissors Paper Lizard Spok")
+                .Header("[underline green]CORRECT EXAMPLE:[/]").Border(BoxBorder.Rounded)
+                .HeaderAlignment(Justify.Left).Padding(2, 1, 2, 1).PadLeft(8);
+        }
+
+        private Panel CreateIncorrectExampleTable()
+        {
+            return new Panel("Rock Scissors Paper Scissors")
+                .Header("[underline red]INCORRECT EXAMPLE:[/]").Border(BoxBorder.Rounded)
+                .HeaderAlignment(Justify.Left).Padding(2, 1, 2, 1).PadLeft(8).PadRight(5);
         }
 
         private void CreateHelpTable()

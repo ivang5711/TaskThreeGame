@@ -8,16 +8,15 @@ namespace TaskThreeGame
 
         private readonly Table table = new();
 
+        private const int panelWidth = 74;
+
         public ConsoleUi(GameMoves gameMoves)
         {
             this.gameMoves = gameMoves;
             CreateHelpTable();
         }
 
-        public void PrintHelpTable()
-        {
-            AnsiConsole.Write(table);
-        }
+        public void PrintHelpTable() => AnsiConsole.Write(table);
 
         private void CreateHelpTable()
         {
@@ -30,6 +29,11 @@ namespace TaskThreeGame
         private void AddColumsToTable()
         {
             AddFirstColumnToTable();
+            AddMovesRowsToTable();
+        }
+
+        private void AddMovesRowsToTable()
+        {
             for (int i = 0; i < gameMoves.Moves.Length; i++)
             {
                 table.AddColumn(new TableColumn(
@@ -37,11 +41,9 @@ namespace TaskThreeGame
             }
         }
 
-        private void AddFirstColumnToTable()
-        {
-            table.AddColumn(
-                new TableColumn($"[khaki1]PC[/]\\[lightsteelblue]User[/]"));
-        }
+        private void AddFirstColumnToTable() =>
+            table.AddColumn(new TableColumn(
+                $"[khaki1]PC[/]\\[lightsteelblue]User[/]"));
 
         private void AddRowNamesToTable()
         {
@@ -154,15 +156,12 @@ namespace TaskThreeGame
                 .Centered().MinimalBorder());
         }
 
-        public static void ClearConsoleScreen()
-        {
-            AnsiConsole.Clear();
-        }
+        public static void ClearConsoleScreen() => AnsiConsole.Clear();
 
-        public static void PrintHmacKey(byte[] key)
+        public static void PrintHmacKey(string key)
         {
             AnsiConsole.Write(new Table()
-                .AddColumn(new TableColumn(new Panel(Convert.ToHexString(key))
+                .AddColumn(new TableColumn(new Panel(key)
                 .Header("[white on MediumPurple4]HMAC key[/]")
                 .Border(BoxBorder.Rounded).Padding(2, 1, 2, 1)
                 .BorderColor(Color.Grey27))).Centered().MinimalBorder());
@@ -193,11 +192,17 @@ namespace TaskThreeGame
 
         public static void PrintGoodbuy()
         {
-            var panel = new Panel("Thanks for the game!")
-                .Border(BoxBorder.Rounded).BorderColor(Color.Grey27)
-                .Header("[white on MediumPurple4]Buy[/]").Padding(2, 1, 2, 1);
             AnsiConsole.Write(new Table()
-                .AddColumn(new TableColumn(panel)).Centered().MinimalBorder());
+                .AddColumn(new TableColumn(CreateGoodbuyPanel()))
+                .Centered().MinimalBorder().Width(panelWidth));
+        }
+
+        private static Panel CreateGoodbuyPanel()
+        {
+            return new Panel("Thanks for the game!".PadRight(35)
+                .PadLeft(57)).Border(BoxBorder.Rounded).Padding(2, 1, 2, 1)
+                .BorderColor(Color.Grey27).HeaderAlignment(Justify.Left)
+                .Header("[white on MediumPurple4]Buy[/]").Expand();
         }
 
         public void ShowGreeting()
@@ -206,7 +211,7 @@ namespace TaskThreeGame
             PrintPressEnter("Press Enter to start...");
         }
 
-        private void PrintPressEnter(string message)
+        private static void PrintPressEnter(string message)
         {
             AnsiConsole.Cursor.Hide();
             AnsiConsole.Write(new Table().AddColumn(new TableColumn(message))
@@ -215,7 +220,7 @@ namespace TaskThreeGame
             AnsiConsole.Cursor.Show();
         }
 
-        private void PrintGreetingBlock()
+        private static void PrintGreetingBlock()
         {
             AnsiConsole.Clear();
             AnsiConsole.WriteLine();
@@ -246,11 +251,12 @@ namespace TaskThreeGame
             CryptographicKeys crypto, int computerMove)
         {
             PrintChoiceTable(choice, computerMove);
-            PrintResult(gameMoves.MovesTable[computerMove, int.Parse(choice) - 1]);
+            PrintResult(
+                gameMoves.MovesTable[computerMove, int.Parse(choice) - 1]);
             PrintHmacKey(crypto.Key);
         }
 
-        private void PrintResult(string result)
+        private static void PrintResult(string result)
         {
             AnsiConsole.Write(new Table()
                 .AddColumn(new TableColumn($"[white on MediumPurple4]" +
@@ -364,6 +370,22 @@ namespace TaskThreeGame
             AnsiConsole.Cursor.MoveUp(1);
             AnsiConsole.Cursor.MoveLeft();
             Console.WriteLine(new string(' ', 200));
+        }
+
+        public static void PrintCheckLink()
+        {
+            AnsiConsole.Write(new Table().AddColumn(new TableColumn(
+                CreateCheckLinkPanel()).Centered())
+                .Centered().MinimalBorder().Width(panelWidth));
+        }
+
+        private static Panel CreateCheckLinkPanel()
+        {
+            return new Panel("\nYou can check if the computer was honest\n" +
+                "and did not change it\'s move by using this website:\n\n" +
+                "[underline blue]https://appdevtools.com/hmac-generator[/]" +
+                "\n").Border(BoxBorder.Rounded).BorderColor(Color.Grey27)
+                .Padding(2, 1, 2, 1).Expand();
         }
     }
 }

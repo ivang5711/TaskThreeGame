@@ -26,7 +26,7 @@
         private void GetResult(string choice, CryptographicKeys crypto)
         {
             consoleUi.PrintGameOutcome(choice, crypto,
-                CryptographicKeys.MakeComputerMove(moves.Moves.Length));
+                crypto.ComputerMove);
         }
 
         private void GetUserChoice(ref string choice)
@@ -48,7 +48,7 @@
         private void ProvideChoiceToUser(ref string choice)
         {
             ConsoleUi.ClearConsoleScreen();
-            ConsoleUi.PrintHmac("9ED68097B2D5D9A968E85BD7094C75D00F96680DC43CDD6918168A8F50DE8507");
+            ConsoleUi.PrintHmac(crypto.Hmac);
             consoleUi.PrintMenu();
             ConsoleUi.CollectUserInput(ref choice);
         }

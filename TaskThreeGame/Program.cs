@@ -5,7 +5,6 @@
         private static void Main(string[] args)
         {
             GameMoves moves = new(args);
-            CryptographicKeys crypto = new();
             ConsoleUi consoleUi = new(moves);
             try
             {
@@ -28,6 +27,7 @@
                 return;
             }
 
+            CryptographicKeys crypto = new(moves);
             Gameplay gameplay = new(moves, consoleUi, crypto);
             consoleUi.GreetUser();
             try
@@ -43,6 +43,7 @@
                 return;
             }
 
+            ConsoleUi.PrintCheckLink();
             ConsoleUi.PrintGoodbuy();
         }
     }

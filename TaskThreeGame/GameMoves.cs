@@ -18,7 +18,7 @@ namespace TaskThreeGame
             CreateMovesTable();
         }
 
-        private string[] FilterOptions(string[] moves)
+        private static string[] FilterOptions(string[] moves)
         {
             return moves.Length > 0 && moves[0].StartsWith('-') ?
                 moves[1..] : moves;
@@ -138,11 +138,11 @@ namespace TaskThreeGame
             if (!isUnique)
             {
                 ConsoleUi.PrintNonUniqueErrorMessage();
-                PrintMovesWithColor();
+                ShowMovesWithColor();
             }
         }
 
-        private void PrintMovesWithColor()
+        private void ShowMovesWithColor()
         {
             List<string> distinctMoves = new();
             GetDistinctMovesWithCount(ref distinctMoves);

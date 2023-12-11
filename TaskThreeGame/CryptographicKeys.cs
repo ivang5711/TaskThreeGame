@@ -15,5 +15,10 @@ namespace TaskThreeGame
         {
             return RandomNumberGenerator.GetBytes(32);
         }
+
+        public static int MakeComputerMove(int upperBound)
+        {
+            return RandomNumberGenerator.GetInt32(upperBound);
+        }
     }
 }

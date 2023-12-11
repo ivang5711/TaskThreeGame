@@ -91,7 +91,7 @@ namespace TaskThreeGame
         }
 
         private static void PrintSingleMoveWithColor(
-            List<string> distinctMoves,string item)
+            List<string> distinctMoves, string item)
         {
             AnsiConsole.Markup(
                     distinctMoves.Contains(item) ?
@@ -242,10 +242,11 @@ namespace TaskThreeGame
             MoveToZeroPosition();
         }
 
-        public void PrintGameOutcome(string choice, CryptographicKeys crypto)
+        public void PrintGameOutcome(string choice,
+            CryptographicKeys crypto, int computerMove)
         {
-            PrintChoiceTable(choice);
-            PrintResult("You win!");
+            PrintChoiceTable(choice, computerMove);
+            PrintResult(gameMoves.MovesTable[computerMove, int.Parse(choice) - 1]);
             PrintHmacKey(crypto.Key);
         }
 
@@ -258,17 +259,18 @@ namespace TaskThreeGame
                 .BorderColor(Color.Khaki1).Width(70));
         }
 
-        private void PrintChoiceTable(string choice)
+        private void PrintChoiceTable(string choice, int computerMove)
         {
             var choiceTable = new Table().Centered().MinimalBorder();
             AddColumnsToChoiceTable(ref choiceTable, choice);
-            AddRowToChoiceTable(ref choiceTable);
+            AddRowToChoiceTable(ref choiceTable, computerMove);
             AnsiConsole.Write(choiceTable);
         }
 
-        private void AddRowToChoiceTable(ref Table choiceTable)
+        private void AddRowToChoiceTable(ref Table choiceTable, int computerMove)
         {
-            choiceTable.AddRow("Computer move:", "rock").Centered();
+            choiceTable.AddRow("Computer move:", gameMoves.Moves[computerMove])
+                .Centered();
         }
 
         private void AddColumnsToChoiceTable(

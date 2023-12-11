@@ -1,6 +1,4 @@
-﻿using Spectre.Console;
-
-namespace TaskThreeGame
+﻿namespace TaskThreeGame
 {
     public class Gameplay
     {
@@ -22,7 +20,13 @@ namespace TaskThreeGame
             GetUserChoice(ref choice);
             ConsoleUi.PrintChoice(choice);
             ExitGame(CheckExitSequence(choice));
-            consoleUi.PrintGameOutcome(choice, crypto);
+            GetResult(choice, crypto);
+        }
+
+        private void GetResult(string choice, CryptographicKeys crypto)
+        {
+            consoleUi.PrintGameOutcome(choice, crypto,
+                CryptographicKeys.MakeComputerMove(moves.Moves.Length));
         }
 
         private void GetUserChoice(ref string choice)

@@ -8,33 +8,32 @@ namespace TaskThreeGame
         private const string win = "Win";
         private const string lose = "Lose";
 
-        public string[,] HelpTable { get; set; }
+        public string[,] MovesTable { get; set; }
         public string[] Moves { get; set; }
 
         public GameMoves(string[] moves)
         {
-            Moves = moves;
-            HelpTable = new string[Moves.Length, Moves.Length];
-            CreateHelpTable();
+            Moves = FilterOptions(moves);
+            MovesTable = new string[Moves.Length, Moves.Length];
+            CreateMovesTable();
+        }
+
+        private string[] FilterOptions(string[] moves)
+        {
+            return moves.Length > 0 && moves[0].StartsWith('-') ?
+                moves[1..] : moves;
         }
 
         public void CheckMoves()
         {
             if (!CheckMovesAmountCorrect() || !CheckAllMovesUnique())
             {
-                PrintArgumentsHelp();
                 throw new ArgumentException("Command line arguments " +
                     "provided are not correct.");
             }
         }
 
-        private void PrintArgumentsHelp()
-        {
-            ConsoleUi.PrintArgumentsRequirements();
-            ConsoleUi.PrintExample();
-        }
-
-        private void CreateHelpTable()
+        private void CreateMovesTable()
         {
             for (int i = 0; i < Moves.Length; i++)
             {
@@ -56,7 +55,7 @@ namespace TaskThreeGame
 
         private void PopulateRowToRight(int i, int j)
         {
-            HelpTable[i, j++] = draw;
+            MovesTable[i, j++] = draw;
             j = PopulateWinToRight(i, j);
             PopulateLoseToRight(i, j);
         }
@@ -65,7 +64,7 @@ namespace TaskThreeGame
         {
             for (int k = 0; j < Moves.Length && k < Moves.Length / 2; k++)
             {
-                HelpTable[i, j++] = win;
+                MovesTable[i, j++] = win;
             }
 
             return j;
@@ -75,7 +74,7 @@ namespace TaskThreeGame
         {
             while (j < Moves.Length)
             {
-                HelpTable[i, j++] = lose;
+                MovesTable[i, j++] = lose;
             }
         }
 
@@ -101,7 +100,7 @@ namespace TaskThreeGame
         {
             for (int k = 0; j >= 0 && k < Moves.Length / 2; k++)
             {
-                HelpTable[i, j--] = lose;
+                MovesTable[i, j--] = lose;
             }
 
             return j;
@@ -111,7 +110,7 @@ namespace TaskThreeGame
         {
             while (j >= 0)
             {
-                HelpTable[i, j--] = win;
+                MovesTable[i, j--] = win;
             }
         }
 

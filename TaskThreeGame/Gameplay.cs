@@ -5,6 +5,7 @@
         private readonly GameMoves moves;
         private readonly ConsoleUi consoleUi;
         private readonly CryptographicKeys crypto;
+        private const string helpMenuKey = "?";
 
         public Gameplay(GameMoves moves,
             ConsoleUi consoleUi, CryptographicKeys crypto)
@@ -55,7 +56,7 @@
 
         private void CheckHelpChoice(string choice)
         {
-            if (choice == "?")
+            if (choice == helpMenuKey)
             {
                 ConsoleUi.PrintChoice(choice);
                 consoleUi.ShowHelpTableBlock();

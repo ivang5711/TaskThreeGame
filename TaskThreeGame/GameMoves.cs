@@ -5,23 +5,17 @@ namespace TaskThreeGame
     public class GameMoves
     {
         private const string draw = "Draw";
-        private const string win = "Win";
         private const string lose = "Lose";
+        private const string win = "Win";
 
         public string[,] MovesTable { get; set; }
         public string[] Moves { get; set; }
 
         public GameMoves(string[] moves)
         {
-            Moves = FilterOptions(moves);
+            Moves = moves;
             MovesTable = new string[Moves.Length, Moves.Length];
             CreateMovesTable();
-        }
-
-        private static string[] FilterOptions(string[] moves)
-        {
-            return moves.Length > 0 && moves[0].StartsWith('-') ?
-                moves[1..] : moves;
         }
 
         public void CheckMoves()
@@ -146,7 +140,7 @@ namespace TaskThreeGame
         {
             List<string> distinctMoves = new();
             GetDistinctMovesWithCount(ref distinctMoves);
-            ConsoleUi.PrintMovesRowWithColor(distinctMoves, Moves);
+            ConsoleUi.PrintMovesRowBlockWithColor(distinctMoves, Moves);
         }
 
         private void GetDistinctMovesWithCount(ref List<string> distinctMoves)

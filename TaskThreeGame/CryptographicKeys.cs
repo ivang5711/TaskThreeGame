@@ -24,13 +24,12 @@ namespace TaskThreeGame
         private int MakeComputerMove() =>
             RandomNumberGenerator.GetInt32(moves.Moves.Length);
 
-        public static string GetHmac(string message, string secret)
+        public static string GetHmac(string text, string hexKey)
         {
             UTF8Encoding encoding = new();
-            HMACSHA256 cryptographer = new(encoding.GetBytes(secret));
-            byte[] bytes = cryptographer.
-                ComputeHash(encoding.GetBytes(message));
-            return Convert.ToHexString(bytes);
+            HMACSHA256 hmac = new(encoding.GetBytes(hexKey));
+            return Convert.ToHexString(
+                hmac.ComputeHash(encoding.GetBytes(text)));
         }
     }
 }

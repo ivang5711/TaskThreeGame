@@ -6,9 +6,32 @@ namespace TaskThreeGame
     {
         private readonly GameMoves gameMoves;
 
-        private readonly Table table = new();
+        private readonly Table helpTable = new();
 
         private const int panelWidth = 74;
+
+        #region GameConsoleUiColorScheme
+
+        private const string colorDominant = "MediumPurple4";
+
+        private const string colorDominantAuxiliary = "lightsteelblue";
+
+        private const string colorAccent = "khaki1";
+
+        private const string colorAccentAuxiliary = "White";
+
+        private const string colorShade = "Grey27";
+
+        private const string colorShadeAuxiliary = "grey74";
+
+        private static readonly Color colorBorder = Color.Grey27;
+
+        private static readonly Color colorGreeting = Color.LightSteelBlue;
+
+        #endregion GameConsoleUiColorScheme
+
+        private const string helpTableFirstCell =
+            $"[{colorAccent}]PC [/]\\[{colorDominantAuxiliary}] User[/]";
 
         public ConsoleUi(GameMoves gameMoves)
         {
@@ -16,7 +39,7 @@ namespace TaskThreeGame
             CreateHelpTable();
         }
 
-        public void PrintHelpTable() => AnsiConsole.Write(table);
+        public void PrintHelpTable() => AnsiConsole.Write(helpTable);
 
         private void CreateHelpTable()
         {
@@ -29,27 +52,32 @@ namespace TaskThreeGame
         private void AddColumsToTable()
         {
             AddFirstColumnToTable();
-            AddMovesRowsToTable();
+            AddMovesColumnsToTable();
         }
 
-        private void AddMovesRowsToTable()
+        private void AddMovesColumnsToTable()
         {
             for (int i = 0; i < gameMoves.Moves.Length; i++)
             {
-                table.AddColumn(new TableColumn(
-                    $"[lightsteelblue]{gameMoves.Moves[i]}[/]"));
+                AddOneMovesColumnToTable(i);
             }
         }
 
+        private void AddOneMovesColumnToTable(int i)
+        {
+            helpTable.AddColumn(new TableColumn(
+                    $"[{colorDominantAuxiliary}]{gameMoves.Moves[i]}[/]"));
+        }
+
         private void AddFirstColumnToTable() =>
-            table.AddColumn(new TableColumn(
-                $"[khaki1]PC[/]\\[lightsteelblue]User[/]"));
+            helpTable.AddColumn(new TableColumn(
+                helpTableFirstCell));
 
         private void AddRowNamesToTable()
         {
             for (int i = 0; i < gameMoves.Moves.Length; i++)
             {
-                table.AddRow($"[khaki1]{gameMoves.Moves[i]}[/]");
+                helpTable.AddRow($"[{colorAccent}]{gameMoves.Moves[i]}[/]");
             }
         }
 
@@ -65,16 +93,16 @@ namespace TaskThreeGame
         {
             for (int j = 0; j < gameMoves.Moves.Length; j++)
             {
-                table.UpdateCell(i, j + 1, gameMoves.MovesTable[i, j]);
+                helpTable.UpdateCell(i, j + 1, gameMoves.MovesTable[i, j]);
             }
         }
 
         private void SetTableParameters()
         {
-            table.Border(TableBorder.Square).BorderColor(Color.Grey27)
+            helpTable.Border(TableBorder.Square).BorderColor(colorBorder)
                 .ShowRowSeparators().Centered()
-                .Title(" Help Table ", new Style(
-                    Color.White, Color.MediumPurple4, Decoration.None));
+                .Title($"[{colorAccentAuxiliary} on " +
+                $"{colorDominant}] Help Table [/]");
         }
 
         public static void PrintArgumentsRequirements()
@@ -98,19 +126,23 @@ namespace TaskThreeGame
             AnsiConsole.Markup(
                     distinctMoves.Contains(item) ?
                     $"[underline red]{item}[/] " :
-                    $"[green]{item}[/] "
-                    );
+                    $"[green]{item}[/] ");
         }
 
-        public static void PrintMovesRowWithColor(List<string> distinctMoves,
-            string[] Moves)
+        public static void PrintMovesRowBlockWithColor(
+            List<string> distinctMoves, string[] moves)
         {
-            foreach (string item in Moves)
+            PrintMovesRowsWithColor(distinctMoves, moves);
+            Console.WriteLine("\n\n");
+        }
+
+        private static void PrintMovesRowsWithColor(
+            List<string> distinctMoves, string[] moves)
+        {
+            foreach (string item in moves)
             {
                 PrintSingleMoveWithColor(distinctMoves, item);
             }
-
-            Console.WriteLine("\n\n");
         }
 
         public static void PrintNonUniqueErrorMessage()
@@ -151,8 +183,8 @@ namespace TaskThreeGame
         {
             AnsiConsole.Write(new Table()
                 .AddColumn(new TableColumn(new Panel(hmac).Padding(2, 1, 2, 1)
-                .Header("[white on MediumPurple4]HMAC[/]")
-                .Border(BoxBorder.Rounded).BorderColor(Color.Grey27)))
+                .Header($"[{colorAccentAuxiliary} on {colorDominant}]HMAC[/]")
+                .Border(BoxBorder.Rounded).BorderColor(colorBorder)))
                 .Centered().MinimalBorder());
         }
 
@@ -160,16 +192,21 @@ namespace TaskThreeGame
 
         public static void PrintHmacKey(string key)
         {
-            AnsiConsole.Write(new Table()
-                .AddColumn(new TableColumn(new Panel(key)
-                .Header("[white on MediumPurple4]HMAC key[/]")
-                .Border(BoxBorder.Rounded).Padding(2, 1, 2, 1)
-                .BorderColor(Color.Grey27))).Centered().MinimalBorder());
+            AnsiConsole.Write(new Table().AddColumn(new TableColumn(
+                new Panel(key).Header($"[{colorAccentAuxiliary} on " +
+                $"{colorDominant}]HMAC key[/]").Border(BoxBorder.Rounded)
+                .Padding(2, 1, 2, 1).BorderColor(colorBorder))).Centered()
+                .MinimalBorder());
         }
 
         public static void PrintGreeting()
         {
             FigletFont font = FigletFont.Load("speed.flf");
+            PrintGreetingMessage(font);
+        }
+
+        private static void PrintGreetingMessage(FigletFont font)
+        {
             PrintFigletLine(font, "Welcome");
             PrintFigletLine(font, "to the");
             PrintFigletLine(font, "Task Three");
@@ -180,7 +217,7 @@ namespace TaskThreeGame
         {
             AnsiConsole.Write(new Table()
                 .AddColumn(new TableColumn(new FigletText(font, text)
-                .Justify(Justify.Center).Color(Color.MediumPurple4)))
+                .Justify(Justify.Center).Color(colorGreeting)))
                 .Centered().MinimalBorder());
         }
 
@@ -199,10 +236,10 @@ namespace TaskThreeGame
 
         private static Panel CreateGoodbuyPanel()
         {
-            return new Panel("Thanks for the game!".PadRight(35)
-                .PadLeft(57)).Border(BoxBorder.Rounded).Padding(2, 1, 2, 1)
-                .BorderColor(Color.Grey27).HeaderAlignment(Justify.Left)
-                .Header("[white on MediumPurple4]Buy[/]").Expand();
+            return new Panel("Thanks for the game!".PadRight(35).PadLeft(57))
+                .Border(BoxBorder.Rounded).Padding(2, 1, 2, 1).Expand()
+                .BorderColor(colorBorder).HeaderAlignment(Justify.Left)
+                .Header($"[{colorAccentAuxiliary} on {colorDominant}]Buy[/]");
         }
 
         public void ShowGreeting()
@@ -259,9 +296,9 @@ namespace TaskThreeGame
         private static void PrintResult(string result)
         {
             AnsiConsole.Write(new Table()
-                .AddColumn(new TableColumn($"[white on MediumPurple4]" +
-                $"{result.PadRight(37).PadLeft(66)}[/]").Centered())
-                .Centered().RoundedBorder()
+                .AddColumn(new TableColumn($"[{colorAccentAuxiliary} on " +
+                $"{colorDominant}]{result.PadRight(37).PadLeft(66)}[/]")
+                .Centered()).Centered().RoundedBorder()
                 .BorderColor(Color.Khaki1).Width(70));
         }
 
@@ -273,7 +310,8 @@ namespace TaskThreeGame
             AnsiConsole.Write(choiceTable);
         }
 
-        private void AddRowToChoiceTable(ref Table choiceTable, int computerMove)
+        private void AddRowToChoiceTable(ref Table choiceTable,
+            int computerMove)
         {
             choiceTable.AddRow("Computer move:", gameMoves.Moves[computerMove])
                 .Centered();
@@ -290,8 +328,8 @@ namespace TaskThreeGame
         public static void PrintChoice(string choice)
         {
             AnsiConsole.Cursor.MoveUp(3);
-            AnsiConsole.Write(new Table()
-                .AddColumn(new TableColumn($"You entered: [Khaki1]{choice}[/]")
+            AnsiConsole.Write(new Table().AddColumn(
+                new TableColumn($"You entered: [{colorAccent}]{choice}[/]")
                 .Centered()).Centered().MinimalBorder());
         }
 
@@ -318,13 +356,14 @@ namespace TaskThreeGame
 
         private static void AddColumnToMenuTable(ref Table menuTable)
         {
-            menuTable.AddColumn(new TableColumn("[grey74]Available moves:[/]")
+            menuTable.AddColumn(new TableColumn(
+                $"[{colorShadeAuxiliary}]Available moves:[/]")
                 .LeftAligned()).Centered();
         }
 
         private static void AddHeaderRowToMenuTable(ref Table menuTable)
         {
-            menuTable.AddRow("[Grey27](pick a number)[/]")
+            menuTable.AddRow($"[{colorShade}](pick a number)[/]")
                 .LeftAligned().Centered().AddEmptyRow();
         }
 
@@ -339,23 +378,27 @@ namespace TaskThreeGame
         {
             for (int i = 0; i < gameMoves.Moves.Length; i++)
             {
-                menuTable.AddRow(
-                    $"{i + 1} - [MediumPurple4]{gameMoves.Moves[i]}[/]")
-                    .LeftAligned().Centered();
+                AddMovesOptionsRowToMenuTable(ref menuTable, i);
             }
+        }
+
+        private void AddMovesOptionsRowToMenuTable(ref Table menuTable, int i)
+        {
+            menuTable.AddRow($"{i + 1} - [{colorDominantAuxiliary}]" +
+                    $"{gameMoves.Moves[i]}[/]").LeftAligned().Centered();
         }
 
         private static void AddExitRowToMenuTable(ref Table menuTable)
         {
-            menuTable.AddRow($"[khaki1]0[/] - [white]exit[/]")
-                .LeftAligned()
-                .Centered();
+            menuTable.AddRow(
+                $"[{colorAccent}]0[/] - [{colorAccentAuxiliary}]exit[/]")
+                .LeftAligned().Centered();
         }
 
         private static void AddHelpRowToMenuTable(ref Table menuTable)
         {
-            menuTable.AddRow($"[khaki1]?[/] - [white on MediumPurple4]help[/]")
-                .LeftAligned().Centered();
+            menuTable.AddRow($"[{colorAccent}]?[/] - [{colorAccentAuxiliary}" +
+                $" on {colorDominant}]help[/]").LeftAligned().Centered();
         }
 
         private static void AddInputRequestRowToMenuTable(ref Table menuTable)
@@ -381,11 +424,17 @@ namespace TaskThreeGame
 
         private static Panel CreateCheckLinkPanel()
         {
-            return new Panel("\nYou can check if the computer was honest\n" +
-                "and did not change it\'s move by using this website:\n\n" +
-                "[underline blue]https://appdevtools.com/hmac-generator[/]" +
-                "\n").Border(BoxBorder.Rounded).BorderColor(Color.Grey27)
+            return new Panel(CreateCheckLinkMessage())
+                .Border(BoxBorder.Rounded).BorderColor(colorBorder)
                 .Padding(2, 1, 2, 1).Expand();
+        }
+
+        private static string CreateCheckLinkMessage()
+        {
+            return "\nYou can check if the computer was honest\n" +
+                "and did not change it\'s move by using this website:\n\n" +
+                $"[underline {colorDominantAuxiliary}]" +
+                $"https://appdevtools.com/hmac-generator[/]\n";
         }
     }
 }

@@ -19,7 +19,8 @@ namespace TaskThreeGame
         }
 
         public static string GetRandomKey() =>
-            Convert.ToHexString(RandomNumberGenerator.GetBytes(32));
+            Convert.ToHexString(RandomNumberGenerator.GetBytes(32))
+            .ToLowerInvariant();
 
         private int MakeComputerMove() =>
             RandomNumberGenerator.GetInt32(moves.Moves.Length);
@@ -29,7 +30,7 @@ namespace TaskThreeGame
             UTF8Encoding encoding = new();
             HMACSHA256 hmac = new(encoding.GetBytes(hexKey));
             return Convert.ToHexString(
-                hmac.ComputeHash(encoding.GetBytes(text)));
+                hmac.ComputeHash(encoding.GetBytes(text))).ToLowerInvariant();
         }
     }
 }
